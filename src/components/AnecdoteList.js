@@ -2,10 +2,22 @@ import React from 'react'
 import { messageRemoval } from '../reducers/notificationReducer'
 import { voteCreation } from '../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
+import anecdoteService from '../services/anecdotes'
 
 class AnecdoteList extends React.Component {
-  handlevote = (event) => {
-    this.props.voteCreation(event.target.id)
+  // handlevote = (event) => {
+  //   this.props.voteCreation(event.target.id)
+  //   setTimeout(() => {
+  //     this.props.messageRemoval()
+  //   }, 5000)
+  // }
+
+  addVote = async (event) => {
+    event.preventDefault()
+    let anecdoteVoted = this.props.anecdotesToShow.filter(a=> a.id === event.target.id)[0]
+    let updatedAnecdote = {...anecdoteVoted, votes: anecdoteVoted.votes+1}
+    const newAnecdote = await anecdoteService.addVote(updatedAnecdote)
+    this.props.voteCreation(newAnecdote)
     setTimeout(() => {
       this.props.messageRemoval()
     }, 5000)
@@ -22,7 +34,7 @@ class AnecdoteList extends React.Component {
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={this.handlevote} id={anecdote.id}>
+              <button onClick={this.addVote} id={anecdote.id}>
                 vote
               </button>
             </div>
@@ -42,7 +54,7 @@ const anecdotesToShow = (anecdotes, filter) => {
 }
 const mapStateToProps = (state) => {
   return {
-    handlevote: state.handlevote,
+    addVote: state.addVote,
     anecdotesToShow: anecdotesToShow(state.anecdotes, state.filter)
   }
 }

@@ -2,10 +2,10 @@ const initialState = { message: '' }
 
 const notificationReducer = (store = initialState, action) => {
   if (action.type === 'VOTE') {
-    return { message: `you voted '${action.content}'` }
+    return { message: `you voted '${action.data.content}'` }
   }
   if (action.type === 'CREATE') {
-    return {message: `you created new anecdote: '${action.content}'`}
+    return {message: `you created new anecdote: '${action.data.content}'`}
   }
   if (action.type === 'REMOVE') {
     return initialState
