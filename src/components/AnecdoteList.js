@@ -11,22 +11,11 @@ class AnecdoteList extends React.Component {
     }, 5000)
   }
 
-  anecdotesToShow = () => {
-    const { anecdotes, filter } = this.props
-    if (filter.filter === 'FILTER') {
-      let filterBy = filter.filterBy
-      return anecdotes.filter(a => a.content.includes(filterBy))
-    } else {
-      return anecdotes
-    }
-  }
-
   render() {
-    const anecdotes = this.anecdotesToShow()
     return (
       <div>
         <h2>Anecdotes</h2>
-        {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {this.props.anecdotesToShow.map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
@@ -43,13 +32,18 @@ class AnecdoteList extends React.Component {
     )
   }
 }
-
+const anecdotesToShow = (anecdotes, filter) => {
+  if (filter.filter === 'FILTER') {
+    let filterBy = filter.filterBy
+    return anecdotes.filter(a => a.content.toLowerCase().includes(filterBy.toLowerCase())).sort((a, b) => b.votes - a.votes)
+  } else {
+    return anecdotes.sort((a, b) => b.votes - a.votes)
+  }
+}
 const mapStateToProps = (state) => {
   return {
     handlevote: state.handlevote,
-    anecdotesToShow: state.anecdotesToShow,
-    anecdotes: state.anecdotes,
-    filter: state.filter
+    anecdotesToShow: anecdotesToShow(state.anecdotes, state.filter)
   }
 }
 
@@ -62,5 +56,6 @@ const ConnectedAnecdoteList = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AnecdoteList)
+
 
 export default ConnectedAnecdoteList
