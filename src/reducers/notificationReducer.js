@@ -1,11 +1,8 @@
 const initialState = { message: '' }
 
 const notificationReducer = (store = initialState, action) => {
-  if (action.type === 'VOTE') {
-    return { message: `you voted '${action.data.content}'` }
-  }
-  if (action.type === 'CREATE') {
-    return {message: `you created new anecdote: '${action.data.content}'`}
+  if (action.type === 'CREATE_MESSAGE') {
+    return { message: action.content }
   }
   if (action.type === 'REMOVE') {
     return initialState
@@ -20,10 +17,18 @@ export const messageRemoval = () => {
   }
 }
 
-export const messageCreation = (content) => {
-  return {
-    type: 'CREATE',
-    content
+export const messageCreation = (content, time) => {
+  return async (dispatch) => {
+    await dispatch({
+      type: 'CREATE_MESSAGE',
+      content
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'REMOVE'
+      })
+    }, time*1000)
+
   }
 }
 

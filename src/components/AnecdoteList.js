@@ -1,33 +1,23 @@
 import React from 'react'
-import { messageRemoval } from '../reducers/notificationReducer'
+import { messageCreation } from '../reducers/notificationReducer'
 import { voteCreation } from '../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
-import anecdoteService from '../services/anecdotes'
 
 class AnecdoteList extends React.Component {
-  // handlevote = (event) => {
-  //   this.props.voteCreation(event.target.id)
-  //   setTimeout(() => {
-  //     this.props.messageRemoval()
-  //   }, 5000)
-  // }
 
   addVote = async (event) => {
     event.preventDefault()
     let anecdoteVoted = this.props.anecdotesToShow.filter(a=> a.id === event.target.id)[0]
     let updatedAnecdote = {...anecdoteVoted, votes: anecdoteVoted.votes+1}
-    const newAnecdote = await anecdoteService.addVote(updatedAnecdote)
-    this.props.voteCreation(newAnecdote)
-    setTimeout(() => {
-      this.props.messageRemoval()
-    }, 5000)
+    this.props.voteCreation(updatedAnecdote)
+    this.props.messageCreation(`you voted '${updatedAnecdote.content}'`, 5)
   }
 
   render() {
     return (
       <div>
         <h2>Anecdotes</h2>
-        {this.props.anecdotesToShow.map(anecdote =>
+        {this.props.anecdotesToShow&&<div>{this.props.anecdotesToShow.map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
@@ -39,7 +29,7 @@ class AnecdoteList extends React.Component {
               </button>
             </div>
           </div>
-        )}
+        )}</div>}
       </div>
     )
   }
@@ -60,7 +50,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-  messageRemoval,
+  messageCreation,
   voteCreation
 }
 
